@@ -1,0 +1,15 @@
+[Unit]
+Description=Run kissutil as a service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kevins
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/home/kevins/
+ExecStart=/usr/local/bin/kissutil -h 172.26.1.149 -v -f /run/user/1000/aprs/kiss
+
+[Install]
+WantedBy=multi-user.target

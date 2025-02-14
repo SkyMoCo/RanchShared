@@ -1,0 +1,304 @@
+[
+    {
+        "id": "d26d577d800b5ad2",
+        "type": "tab",
+        "label": "KISS Telemetry Packet",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7ab61e4385be32a3",
+        "type": "inject",
+        "z": "d26d577d800b5ad2",
+        "name": "Every 5 Hours",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "18000",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "20",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 40,
+        "wires": [
+            [
+                "40dc7f7445d78454",
+                "f73b737a4c3b1ba7",
+                "cab01fe977f9240d"
+            ]
+        ]
+    },
+    {
+        "id": "eb1166c66be17e94",
+        "type": "file",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "filename": "/run/user/1000/aprs/kiss/parm.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 780,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "40dc7f7445d78454",
+        "type": "function",
+        "z": "d26d577d800b5ad2",
+        "name": "Create PARM Packet",
+        "func": "// Create a param string like so that is suitable for KISS,  note spaces are important\n// NOCALL-8>APDR15,WIDE1-1:T#014,042,099,099,099,042\n// NOCALL-8>APDW18::NOCALL-8 :PARM.OutT,InvertT,MainSOC,SecSOC,BattT,PumpM,PumpS\n// We create our own with TempOut,TempIn,MainSOC,SecSOC,BattT\n\nmsg.payload = \"NOCALL-8>APDW18::NOCALL-8 :PARM.OutT,InvertT,MainSOC,SecSOC,BattT,PumpM,PumpS\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 40,
+        "wires": [
+            [
+                "eb1166c66be17e94"
+            ]
+        ]
+    },
+    {
+        "id": "fe27edf42dad912e",
+        "type": "function",
+        "z": "d26d577d800b5ad2",
+        "name": "Create UNIT Packet",
+        "func": "// Based on this parm string\n// :NOCALL-8 :PARM.Cpu,Temp,FreeM,RxP,TxP\n// Create a unit packet\n// :NOCALL-8 :UNIT.Load,DegC,Mb,Pkt,Pkt\n\nmsg.payload = \"NOCALL-8>APDW18::NOCALL-8 :UNIT.DegF,DegF,S,S\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 100,
+        "wires": [
+            [
+                "b7654376ce8459e6",
+                "4f20194d816e64ef"
+            ]
+        ]
+    },
+    {
+        "id": "b7654376ce8459e6",
+        "type": "file",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "filename": "/run/user/1000/aprs/kiss/unit.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 770,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f73b737a4c3b1ba7",
+        "type": "delay",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "fe27edf42dad912e"
+            ]
+        ]
+    },
+    {
+        "id": "955849dd26290142",
+        "type": "function",
+        "z": "d26d577d800b5ad2",
+        "name": "Create EQNS Packet",
+        "func": "// Create a EQNS string like so\n// :NOCALL-8 :EQNS.0,0.001,0,0,0.001,0,0,1,0,0,1,0,0,1,0\n// We create our own with TempOut,TempIn,MainSOC,SecSOC\n\nmsg.payload = \"NOCALL-8>APDW18::NOCALL-8 :EQNS.0,1,0\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 180,
+        "wires": [
+            [
+                "825dcc3100b457d8"
+            ]
+        ]
+    },
+    {
+        "id": "825dcc3100b457d8",
+        "type": "file",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "filename": "/run/user/1000/aprs/kiss/eqns.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 770,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cab01fe977f9240d",
+        "type": "delay",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "10",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 300,
+        "y": 180,
+        "wires": [
+            [
+                "955849dd26290142"
+            ]
+        ]
+    },
+    {
+        "id": "8a3b0f39d726db78",
+        "type": "function",
+        "z": "d26d577d800b5ad2",
+        "name": "Create DATA Packet",
+        "func": "// Create a Telemetry DATA string like so:\n// N1YOQ-1>APMI0A,UNCAN,WIDE1*,WIDE2-1:T#196,174,000,000,000,000,00000000\n// For TempOut,TempIn,MainSOC,SecSOC\n// NOCALL-8>APDW18:T#544,7,36,90,90\n// For TempOut,TempIn,MainSOC,SecSOC\n\nfunction replaceCharAtIndex(str, index, replacement) {\n    if (index >= str.length || index < 0) {\n        return str; // Return original string if index is out of bounds\n    }\n    return str.slice(0, index) + replacement + str.slice(index + 1);\n}\n\n// count is set On Start\nvar cnt = flow.get(\"TelemetryCount\");\nif (cnt > 999) {\n    flow.set(\"TelemetryCount\", 0, \"storeInFile\"); \n} else { \n    flow.set(\"TelemetryCount\", (cnt + 1), \"storeInFile\"); \n}\n\n\nvar outsideTempature = global.get(\"SprinklerTempature\");\nvar inverterTempature = global.get(\"SA_InverterTempature\");\nvar batteryTempature = global.get(\"SA_BatteryTempature\");\nvar mainSOC = global.get(\"SA_SOC\");\n\n// Flip bits for the single digital packet\n// Note that this is not a bit mask, it's a string\n//    bitMask = Math.pow(2, 2);\n//    digitalTelemetry = digitalTelemetry ^ bitMask;\n\nvar digitalTelemetry = \"00000000\";\n\nif(global.get(\"CreekPumpEnable\") == 1) {  // Flip the first bit\n    digitalTelemetry = replaceCharAtIndex(digitalTelemetry,0, \"1\"); \n}\nif(global.get(\"MainPumpEnable\") == 1) {   // Flip the second bit \n    digitalTelemetry = replaceCharAtIndex(digitalTelemetry, 1, \"1\");\n}\n\n\n// Format is T#, then 5 analog fields and one digital field\n// Vars must be three digits\nmsg.payload = \"NOCALL-8>APDW18:T#\"+ String(cnt).padStart(3,'0') + \",\" \n+ String(Math.floor(outsideTempature)).padStart(3,'0') + \",\" \n+ String(Math.floor(inverterTempature)).padStart(3,'0') + \",\" \n+ String(mainSOC).padStart(3,'0') + \",\" \n+ String(099).padStart(3,'0') + \",\"\n+ String(Math.floor(batteryTempature)).padStart(3,'0') + \",\"\n+ digitalTelemetry;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nif (flow.get(\"TelemetryCount\") !== undefined) {\n    node.log(\"Global TelemetryCount exist\");\n}\nelse {\n    flow.set(\"TelemetryCount\", 000,\"storeInFile\" );\n}",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 260,
+        "wires": [
+            [
+                "71fd570a48e265ec",
+                "a6adc1f6dfaf3661"
+            ]
+        ]
+    },
+    {
+        "id": "71fd570a48e265ec",
+        "type": "file",
+        "z": "d26d577d800b5ad2",
+        "name": "",
+        "filename": "/run/user/1000/aprs/kiss/data.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 770,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a6adc1f6dfaf3661",
+        "type": "debug",
+        "z": "d26d577d800b5ad2",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 720,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4f20194d816e64ef",
+        "type": "debug",
+        "z": "d26d577d800b5ad2",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "751d191d95b12158",
+        "type": "inject",
+        "z": "d26d577d800b5ad2",
+        "name": "Every 10 Minutes",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "600",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "8a3b0f39d726db78"
+            ]
+        ]
+    }
+]
